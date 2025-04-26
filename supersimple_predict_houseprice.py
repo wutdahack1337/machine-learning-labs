@@ -6,37 +6,40 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 np.set_printoptions(precision=9, suppress=True)
+np.random.seed(1337)
 
 df = pd.read_csv("kc_house_data.csv")
 df = df.dropna()
 
-X = df[["bedrooms", "sqft_lot", "sqft_living", "floors", "view", "yr_built", "lat", "long"]].values
-X = (X - X.mean(axis = 0))/X.std(axis=0)
-
+X = df[["bedrooms", "bathrooms", "sqft_living", "sqft_lot", "floors", "waterfront", "view", "condition", "grade", "sqft_above", "sqft_basement", "yr_built", "yr_renovated", "zipcode", "lat", "long", "sqft_living15", "sqft_lot15"]].values
 y = df[["price"]].values
+XTrain, XTest, yTrain, yTest = train_test_split(X, y, test_size=0.2, random_state=1337)
 
-XTrain, XTest, yTrain, yTest = train_test_split(X, y, test_size=0.3, shuffle=True)
+mean, std = XTrain.mean(axis=0), XTrain.std(axis=0)
+XTrain = (XTrain - mean) / std
+XTest  = (XTest  - mean) / std
+
+print(df.columns)
 
 class NeuralNetwork:
     def __init__(self, nFeatures):
         self.weights = np.random.randn(nFeatures + 1)
 
     def Predict(self, xs):
-        return self.weights[1:] @ xs.T + self.weights[0]
+        return (self.weights[1:] @ xs.T + self.weights[0]).reshape(-1, 1)
 
     def Optimize(self, xs, y, prediction, batchSize, learningRate):
-        error = prediction - y.T
-        gradWeights = 2*(error @ xs)/batchSize
+        error = prediction - y
+        gradWeights = (2*(error.T @ xs)/batchSize).flatten()
         gradBias    = 2*np.mean(error)
 
-        self.weights[1:] -= learningRate*gradWeights.reshape(xs.shape[1],)
-        
+        self.weights[1:] -= learningRate*gradWeights
         self.weights[0]  -= learningRate*gradBias
     
     def Train(self, xs, y, batchSize, learningRate):
         prediction = self.Predict(xs)
         self.Optimize(xs, y, prediction, batchSize, learningRate)
-        return np.mean((prediction - y) ** 2)
+        return np.sum((prediction - y)**2)
     
     def Fit(self, epochs, batchSize, learningRate):  
         trainHistory = []
@@ -47,13 +50,14 @@ class NeuralNetwork:
             yTrainShuffled = yTrain[indices]
             
             trainLoss = 0
-            for i in range(0, len(features), batchSize):
+            for i in range(0, len(XTrainShuffled), batchSize):
                 xsBatch = XTrainShuffled[i:i+batchSize]
                 yBatch  = yTrainShuffled[i:i+batchSize]
                 if (len(xsBatch) == 0):
                     continue
                 trainLoss += self.Train(xsBatch, yBatch, len(xsBatch), learningRate)
-            trainLoss /= (len(XTrain)//batchSize)
+
+            trainLoss /= len(XTrain)
 
             testPrediction = self.Predict(XTest)
             testLoss = np.mean((testPrediction - yTest)**2)
@@ -69,4 +73,4 @@ class NeuralNetwork:
                 plt.show()
             
 model = NeuralNetwork(XTrain.shape[1])
-model.Fit(epochs=300, batchSize=8, learningRate=0.0000025)
+model.Fit(epochs=3000, batchSize=16, learningRate=0.000005)
