@@ -1,2 +1,2 @@
-# ai
-AI
+# machine-learning-labs
+machine learning labs
