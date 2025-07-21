@@ -1,18 +1,22 @@
+import os
 import datetime
 import numpy as np
 from tqdm import tqdm
 import gymnasium as gym
 from matplotlib import pyplot as plt
+from dotenv import load_dotenv
+from pathlib import Path
 
 from blackjack import BlackjackAgent
 from utils import get_moving_avgs
 
+load_dotenv(dotenv_path="config/.env")
 # Training hyperparameters
-learning_rate  = 0.06    # How fast to learn (higher = faster but less stable)
-n_episodes     = 333_333 # Number of hands to practice 
-start_epsilon  = 1.0     # Start with 100% random actions   
-epsilon_decay  = start_epsilon/(n_episodes/1.5) # Reduce exploration over time
-final_epsilon  = 0.1     # Always keep some exploration
+learning_rate  = float(os.getenv("LEARNING_RATE")) # How fast to learn (higher = faster but less stable)
+n_episodes     = int(os.getenv("N_EPISODES"))      # Number of hands to practice 
+start_epsilon  = float(os.getenv("START_EPSILON")) # Start with 100% random actions   
+epsilon_decay  = start_epsilon/(n_episodes/1.5)    # Reduce exploration over time
+final_epsilon  = float(os.getenv("FINAL_EPSILON")) # Always keep some exploration
 
 # Create enviroment and agent
 env = gym.make("Blackjack-v1", sab=False)
@@ -108,8 +112,6 @@ def test_agent(agent, env, num_episodes = 1000):
     print(f"Win Rate: {win_rate:.1%}")
     print(f"Average Reward: {average_reward:.3f}")
     print(f"Standard Deviation: {np.std(total_rewards):.3f}")
-    plt.hist(total_rewards)
-    plt.show()
 
 # Test your agent
 test_agent(agent, env)
