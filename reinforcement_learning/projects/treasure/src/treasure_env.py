@@ -1,20 +1,23 @@
 import numpy as np
+import random
 from random import randint
 
 class TreasureEnv():
-    def __init__(self, size: int = 3):
+    def __init__(self, size: int = 3, seed: int = 1337):
         """
         Init (i, j) world
         """
+        random.seed(seed)
+
         self.size = size
 
-        self._target_location = np.array([randint(0, self.size-1), randint(0, self.size-1)])
-        self._agent_location  = np.array([-1, -1])
+        self.__target_location = np.array([randint(0, self.size-1), randint(0, self.size-1)])
+        self.agent_location  = np.array([-1, -1])
 
         self.action_space = 4
         self.action_to_direction = {
-            0: np.array([1, 0]),  # Up
-            1: np.array([-1, 0]), # Down
+            0: np.array([-1, 0]),  # Up
+            1: np.array([1, 0]), # Down
             2: np.array([0, -1]), # Left
             3: np.array([0, 1]),  # Right
         }
@@ -24,13 +27,13 @@ class TreasureEnv():
         Returns
             observation (agent and target location) and distance info
         """
-        self._agent_location  = np.array([randint(0, self.size-1), randint(0, self.size-1)])
+        self.agent_location  = np.array([randint(0, self.size-1), randint(0, self.size-1)])
         
-        while np.array_equal(self._agent_location, self._target_location):
-            self._agent_location  = np.array([randint(0, self.size-1), randint(0, self.size-1)])
+        while np.array_equal(self.agent_location, self.__target_location):
+            self.agent_location = np.array([randint(0, self.size-1), randint(0, self.size-1)])
 
-        obs  = self._get_obs()
-        info = self._get_info()
+        obs  = self.__get_obs()
+        info = self.__get_info()
 
         return obs, info
     
@@ -39,39 +42,39 @@ class TreasureEnv():
         Returns
             obs, reward, terminated, info
         """
-        self._agent_location += self.action_to_direction[action]
+        self.agent_location += self.action_to_direction[action]
 
-        obs = self._get_obs()
-        info = self._get_info()
+        obs = self.__get_obs()
+        info = self.__get_info()
         
-        terminated = np.array_equal(self._agent_location, self._target_location)
-        reward = -self._calc_distance()
+        terminated = np.array_equal(self.agent_location, self.__target_location)
+        reward = 1 if terminated else 0
 
-        return obs, reward, terminated, info 
+        return obs, reward, terminated, info
     
     def render(self):
         for i in range(self.size):
             for j in range(self.size):
-                if np.array_equal([i, j], self._agent_location):
+                if np.array_equal([i, j], self.agent_location):
                     print('[O]', end='')
-                elif np.array_equal([i, j], self._target_location):
+                elif np.array_equal([i, j], self.__target_location):
                     print('[X]', end='')
                 else:
                     print('[ ]', end='')
             print()
 
-    def _get_obs(self):
-        return {"agent": self._agent_location, "target": self._target_location}
+    def __get_obs(self):
+        return {"agent": self.agent_location.copy(), "target": self.__target_location.copy()}
     
-    def _get_info(self):
-        return {"distance": self._calc_distance()}
+    def __get_info(self):
+        return {"distance": self.__calc_distance()}
 
-    def _calc_distance(self):
+    def __calc_distance(self):
         """
         Returns
             Mahattan distance
         """
-        return abs(self._agent_location[0] - self._target_location[0]) + abs(self._agent_location[1] - self._target_location[1])
+        return abs(self.agent_location[0] - self.__target_location[0]) + abs(self.agent_location[1] - self.__target_location[1])
 
 
 

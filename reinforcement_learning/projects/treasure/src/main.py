@@ -8,8 +8,8 @@ load_dotenv("config/.env")
 size = int(os.getenv("SIZE"))
 n_episodes = int(os.getenv("N_EPISODES"))
 
-env   = TreasureEnv(size=size)
-agent = TreasureAgent(env)
+env   = TreasureEnv(size=size, seed=1337)
+agent = TreasureAgent(env, seed=1337)
 
 # Training
 for episode in range(n_episodes):
@@ -22,13 +22,15 @@ for episode in range(n_episodes):
 
     terminated = False
     while not terminated:
-        action = agent.get_action()
-        obs, reward, terminated, info = env.step(action)
+        action = agent.get_action(obs)
+        next_obs, reward, terminated, info = env.step(action)
 
-        print(f"agent:  {obs['agent']}")
-        print(f"target: {obs['target']}")
+        print(f"agent:  {next_obs['agent']}")
+        print(f"target: {next_obs['target']}")
         print(f"reward: {reward}")
         env.render()
         print()
 
+        agent.learn(obs, action, reward, terminated, next_obs)
+        obs = next_obs
 # Testing
