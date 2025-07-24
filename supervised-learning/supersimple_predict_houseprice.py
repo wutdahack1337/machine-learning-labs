@@ -3,7 +3,6 @@ import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
-import seaborn as sns
 
 np.set_printoptions(precision=9, suppress=True)
 np.random.seed(1337)
