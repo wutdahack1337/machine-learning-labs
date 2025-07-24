@@ -15,16 +15,22 @@ class TreasureAgent:
         self.learning_rate   = learning_rate
         self.discount_factor = discount_factor
 
-    def get_action(self, obs):
+    def get_action(self, obs, verbose = 1):
         obs = tuple(np.concatenate(list(obs.values())))
 
-        if random.random() <= self.epsilon:
+        if random.random() <= self.epsilon or not np.max(self.q_values[obs]) > 0:
+            if verbose == 1:
+                print("random action")
+
             action = randint(0, self.env.action_space-1)
             while not self.__check_inside(self.env.agent_location + self.env.action_to_direction[action]):
                 action = randint(0, self.env.action_space-1)
             return action
         else:
-            row = self.q_values[obs]
+            if verbose == 1:
+                print("greedy action")
+                
+            row = self.q_values[obs].copy()
             for action in range (self.env.action_space):
                 if not self.__check_inside(self.env.agent_location + self.env.action_to_direction[action]):
                     row[action] = -1
