@@ -3,11 +3,12 @@ import random
 from random import randint
 
 class TreasureEnv():
-    def __init__(self, size: int = 3, seed: int = 1337):
+    def __init__(self, size, seed):
         """
         Init (i, j) world
         """
-        random.seed(seed)
+        if seed is not None:
+            random.seed(seed)
 
         self.size = size
 

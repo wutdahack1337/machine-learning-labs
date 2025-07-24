@@ -9,7 +9,7 @@ def check_response(env, obs, reward):
     print()
 
 def check_q_values(env, agent):
-    print("====== Q-values ======")
+    print("\n====== Q-values ======")
     for obs in sorted(agent.q_values):
         if np.max(agent.q_values[obs]) > 0:
             for i in range(env.size):

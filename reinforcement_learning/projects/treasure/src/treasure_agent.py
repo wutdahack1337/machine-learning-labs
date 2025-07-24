@@ -4,7 +4,7 @@ from random import randint
 from collections import defaultdict
 
 class TreasureAgent:
-    def __init__(self, env, learning_rate: float = 0.01, epsilon: float = 0.1, discount_factor: float = 0.95, seed: int = 1337):
+    def __init__(self, env, learning_rate, epsilon, discount_factor, seed):
         random.seed(seed)
 
         self.env = env
@@ -18,7 +18,7 @@ class TreasureAgent:
     def get_action(self, obs, verbose = 1):
         obs = tuple(np.concatenate(list(obs.values())))
 
-        if random.random() <= self.epsilon or not np.max(self.q_values[obs]) > 0:
+        if random.random() < self.epsilon or not np.max(self.q_values[obs]) > 0:
             if verbose == 1:
                 print("random action")
 
