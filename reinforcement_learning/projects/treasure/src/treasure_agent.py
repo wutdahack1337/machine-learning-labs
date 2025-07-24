@@ -31,7 +31,7 @@ class TreasureAgent:
                 print("greedy action")
                 
             row = self.q_values[obs].copy()
-            for action in range (self.env.action_space):
+            for action in range(self.env.action_space):
                 if not self.__check_inside(self.env.agent_location + self.env.action_to_direction[action]):
                     row[action] = -1
             return int(np.argmax(row)) 

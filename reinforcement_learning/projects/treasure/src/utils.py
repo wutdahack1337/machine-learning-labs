@@ -19,7 +19,7 @@ def check_q_values(env, agent):
                     elif (i, j) == (obs[2], obs[3]):
                         print("[X]", end='')
                     else:
-                        print("[ ]", end='') 
+                        print("[ ]", end='')
                 print()
 
             print(f"Up: {agent.q_values[obs][0]}")
@@ -36,7 +36,7 @@ def get_moving_average(arr, window, convolution_mode):
 
 def plot_training_results(arr, size, n_episodes, rolling_length = 500):
     if len(arr) < rolling_length:
-        print("len(arr) must >= rolling_length")
+        print("array length must be >= rolling_length")
         return
 
     step_moving_average = get_moving_average(arr, rolling_length, "valid")
