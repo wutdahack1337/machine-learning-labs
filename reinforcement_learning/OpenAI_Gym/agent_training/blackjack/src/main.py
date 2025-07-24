@@ -18,7 +18,7 @@ start_epsilon  = float(os.getenv("START_EPSILON")) # Start with 100% random acti
 epsilon_decay  = start_epsilon/(n_episodes/1.5)    # Reduce exploration over time
 final_epsilon  = float(os.getenv("FINAL_EPSILON")) # Always keep some exploration
 
-# Create enviroment and agent
+# Create environment and agent
 env = gym.make("Blackjack-v1", sab=False)
 env = gym.wrappers.RecordEpisodeStatistics(env, buffer_length=n_episodes)
 

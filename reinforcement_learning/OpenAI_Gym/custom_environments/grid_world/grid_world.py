@@ -28,7 +28,7 @@ class GridWorldEnv(gym.Env):
         # Map action numbers to actual movements on the grid
         # This makes the code more readable than using raw numbers
         self._action_to_direction = {
-            0: np.array([1, 0]),  # Move riggt (positive x)
+            0: np.array([1, 0]),  # Move right (positive x)
             1: np.array([0, 1]),  # Move up (positive y)
             2: np.array([-1, 0]), # Move left (negative x)
             3: np.array([0, -1]), # Move down (negative y)
@@ -82,7 +82,7 @@ class GridWorldEnv(gym.Env):
 
     def step(self, action):
         """
-        Execute one timestep within the enviroment
+        Execute one timestep within the environment
 
         Args:
             action: The action to take (0-3 for directions)
@@ -104,7 +104,7 @@ class GridWorldEnv(gym.Env):
         # (could add a step limit here if desired)
         truncated   = False
 
-        # Simple reward stucture: +1 for reaching target, 0 otherwise
+        # Simple reward structure: +1 for reaching target, 0 otherwise
         # Alternative: could give small negative rewards for each step to encourage efficiency
         reward      = 1 if terminated else 0
         
@@ -114,7 +114,7 @@ class GridWorldEnv(gym.Env):
         return observation, reward, terminated, truncated, info
     
 
-# Register the enviroment so we can create it with gym.make()
+# Register the environment so we can create it with gym.make()
 gym.register(
     id="custom_environments/GridWorld-v0",
     entry_point=GridWorldEnv,
@@ -133,7 +133,7 @@ except Exception as e:
 # Test specific action sequences to verify behavior
 obs, info = env.reset(seed=1337) # Use seed for reproducible testing
 
-print(f"Starting positio - Agent: {obs["agent"]}, Target: {obs["target"]}")
+print(f"Starting position - Agent: {obs["agent"]}, Target: {obs["target"]}")
 
 # Test each action type
 actions = [0, 1, 2, 3] # right, up, left, down

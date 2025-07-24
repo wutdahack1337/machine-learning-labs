@@ -72,7 +72,7 @@ class TreasureEnv():
     def __calc_distance(self):
         """
         Returns
-            Mahattan distance
+            Manhattan distance
         """
         return abs(self.agent_location[0] - self.__target_location[0]) + abs(self.agent_location[1] - self.__target_location[1])
 
