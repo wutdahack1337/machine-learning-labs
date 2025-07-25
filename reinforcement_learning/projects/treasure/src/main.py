@@ -10,28 +10,21 @@ def main():
     Treasure hunting agent
     """
     config = TrainingConfig()
-    size       = config.size
-    seed       = config.seed
-    train_episodes  = config.train_episodes
-    learning_rate   = config.learning_rate
-    discount_factor = config.discount_factor
-    epsilon = config.epsilon
-    test_episodes = config.test_episodes 
 
-    env   = TreasureEnv(size=size, seed=seed)
-    agent = TreasureAgent(env, learning_rate, epsilon, discount_factor, seed)
+    env   = TreasureEnv(size=config.size, seed=config.seed)
+    agent = TreasureAgent(env, config.learning_rate, config.epsilon, config.discount_factor, config.seed)
 
     # Training
-    print(f"Training agent on {size}x{size} world for {train_episodes} episodes...")
-    step_cnt_queue = train_agent(env, agent, train_episodes)
+    print(f"Training agent on {config.size}x{config.size} world for {config.train_episodes} episodes...")
+    step_cnt_queue = train_agent(env, agent, config.train_episodes)
 
     # Analysis
     utils.check_q_values(env, agent)
-    utils.plot_training_results(step_cnt_queue, size, train_episodes)
+    utils.plot_training_results(step_cnt_queue, config.size, config.train_episodes)
 
     # Testing
     print("Testing trained agent (exploitation only)...")
-    test_agent(env, agent, test_episodes)
+    test_agent(env, agent, config.test_episodes)
 
 def train_agent(env, agent, n_episodes):
     """
